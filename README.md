@@ -33,7 +33,9 @@ Shader가 사용하는 언어.
         - `iResolution` : 화면 해상도. 랜더링되는 객체의 크기/위치 조정에 사용.
         - `fragColor` : 랜더링된 객체의 최종 색상.
           (이 값은 CPU로 전달되고, 이후 화면에 표시될 때 사용함.)
-    - `main` 함수를 선언하고, 안에 2줄의 코드를 최상단에 넣습니다.
+    - `main` 함수를 선언하고, 안에 2~3줄의 코드를 최상단에 넣습니다.
+      - `fragCoord.y = uSize.y - fragCoord.y;` : 위아래를 뒤집어서 랜더링해야 할 경우 사용.
+      - Flutter는 Y좌표가 위에서 아래로 증가하는 반면, OpenGL은 아래에서 위로 증가합니다. 이 때문에, 간혹 y좌표를 뒤집에서 사용해야 하는 경우가 존재합니다.
 ```c
 #include <flutter/runtime_effect.glsl>
 
