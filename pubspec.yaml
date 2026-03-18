@@ -26,3 +26,4 @@ flutter:
   shaders:
     - shaders/seascape.frag
     - shaders/gradient_flow.frag
+    - shaders/glitch_transition.frag

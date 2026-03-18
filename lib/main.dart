@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shader_study/shader_mask/shader_mask_screen.dart';
 
 import 'seascape/seascape_screen.dart';
 import 'gradient_background/gradient_background_screen.dart';
@@ -17,6 +18,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/gradient-background',
       builder: (context, state) => const GradientBackgroundScreen(),
+    ),
+    GoRoute(
+      path: '/shader-mask',
+      builder: (context, state) => const ShaderMaskScreen(),
     ),
   ],
 );
@@ -51,16 +56,20 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
+          spacing: 16,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () => context.push('/seascape'),
               child: const Text('Seascape'),
             ),
-            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.push('/gradient-background'),
               child: const Text('Gradient Background'),
+            ),
+            ElevatedButton(
+              onPressed: () => context.push('/shader-mask'),
+              child: const Text('ShaderMask'),
             ),
           ],
         ),
