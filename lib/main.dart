@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shader_study/full_size_effects/full_size_effects_screen.dart';
 import 'package:shader_study/shader_mask/shader_mask_screen.dart';
 
+import 'routes.dart';
 import 'seascape/seascape_screen.dart';
 import 'gradient_background/gradient_background_screen.dart';
 
 final _router = GoRouter(
   routes: [
     GoRoute(
-      path: '/',
+      path: Routes.main,
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: '/seascape',
+      path: Routes.seascape,
       builder: (context, state) => const SeascapeScreen(),
     ),
     GoRoute(
-      path: '/gradient-background',
+      path: Routes.gradientBackground,
       builder: (context, state) => const GradientBackgroundScreen(),
     ),
     GoRoute(
-      path: '/shader-mask',
+      path: Routes.shaderMask,
       builder: (context, state) => const ShaderMaskScreen(),
+    ),
+    GoRoute(
+      path: Routes.fullSizeEffects,
+      builder: (context, state) => const FullSizeEffectsScreen(),
     ),
   ],
 );
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -41,6 +52,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       routerConfig: _router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -60,16 +72,20 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => context.push('/seascape'),
+              onPressed: () => context.push(Routes.seascape),
               child: const Text('Seascape'),
             ),
             ElevatedButton(
-              onPressed: () => context.push('/gradient-background'),
+              onPressed: () => context.push(Routes.gradientBackground),
               child: const Text('Gradient Background'),
             ),
             ElevatedButton(
-              onPressed: () => context.push('/shader-mask'),
+              onPressed: () => context.push(Routes.shaderMask),
               child: const Text('ShaderMask'),
+            ),
+            ElevatedButton(
+              onPressed: () => context.push(Routes.fullSizeEffects),
+              child: const Text('Full Size Effects'),
             ),
           ],
         ),

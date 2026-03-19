@@ -13,17 +13,49 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   go_router: ^17.1.0
+  flutter_riverpod: ^3.3.0
+  riverpod_annotation: ^4.0.2
+
+  flutter_svg: ^2.2.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+  build_runner:
+  riverpod_generator: ^4.0.3
 
 flutter:
   uses-material-design: true
 
   shaders:
-    - shaders/seascape.frag
-    - shaders/gradient_flow.frag
     - shaders/glitch_transition.frag
+    - shaders/gradient_flow.frag
+    - shaders/seascape.frag
+    - shaders/side_effect_of_mushrooms_v15.frag
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Thin.otf
+          weight: 100
+        - asset: assets/fonts/Pretendard-ExtraLight.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard-Light.otf
+          weight: 300
+        - asset: assets/fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard-Medium.otf
+          weight: 500
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/Pretendard-Bold.otf
+          weight: 700
+        - asset: assets/fonts/Pretendard-ExtraBold.otf
+          weight: 800
+        - asset: assets/fonts/Pretendard-Black.otf
+          weight: 900
+
+  assets:
+    - assets/images/

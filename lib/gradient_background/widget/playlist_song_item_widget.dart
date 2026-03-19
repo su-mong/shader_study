@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../model/playlist_song_model.dart';
+
+class PlaylistSongItemWidget extends StatelessWidget {
+  final bool isSelected;
+  final PlaylistSongModel model;
+  final VoidCallback onClick;
+
+  const PlaylistSongItemWidget({
+    super.key,
+    required this.isSelected,
+    required this.model,
+    required this.onClick,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onClick,
+            child: Container(
+              color: isSelected ? model.colorInfo.primary : null,
+              padding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 16,
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/${model.songImageUrl}',
+                    width: 60,
+                    height: 60,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          model.title,
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            height: 24 / 16,
+                            color: Color(0xFFFFFFFF),
+                            // color: isSelected ? primaryTextColor : AppTheme.mainTextColor,
+                          ),
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '${model.artistName} ・ ${model.albumName}',
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w200,
+                            fontSize: 14,
+                            height: 21 / 14,
+                            color: Color(0xFFFFFFFF),
+                            // color: AppTheme.secondaryColor,
+                          ),
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
