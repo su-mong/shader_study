@@ -25,7 +25,7 @@ class PlaylistSongItemWidget extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTap: onClick,
             child: Container(
-              color: isSelected ? model.colorInfo.primary : null,
+              color: isSelected ? const Color(0x2F000000) : null,
               padding: const EdgeInsets.symmetric(
                 vertical: 8,
                 horizontal: 16,

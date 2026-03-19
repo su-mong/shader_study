@@ -14,7 +14,6 @@ class GradientBackgroundScreen extends ConsumerWidget with PlayerStateMixin, Pla
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFF121717),
-      appBar: PlaylistAppBar(),
       body: Stack(
         children: [
           /// gradient background
@@ -22,22 +21,33 @@ class GradientBackgroundScreen extends ConsumerWidget with PlayerStateMixin, Pla
 
           /// main body
           SafeArea(
-            child: ListView.builder(
-              itemCount: playlist(ref).length,
-              itemBuilder: (context, index) {
-                final item = playlist(ref)[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 6,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                /// appbar
+                const PlaylistAppBar(),
+
+                /// contents
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: playlist(ref).length,
+                    itemBuilder: (context, index) {
+                      final item = playlist(ref)[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 6,
+                        ),
+                        child: PlaylistSongItemWidget(
+                          isSelected: isSelected(ref, item.id),
+                          model: item,
+                          onClick: () => changeSelectedItem(ref, item),
+                        ),
+                      );
+                    },
                   ),
-                  child: PlaylistSongItemWidget(
-                    isSelected: isSelected(ref, item.id),
-                    model: item,
-                    onClick: () => changeSelectedItem(ref, item),
-                  ),
-                );
-              },
+                ),
+              ],
             ),
           ),
         ],
