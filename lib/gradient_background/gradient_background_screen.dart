@@ -25,7 +25,9 @@ class GradientBackgroundScreen extends ConsumerWidget with PlayerStateMixin, Pla
               mainAxisSize: MainAxisSize.max,
               children: [
                 /// appbar
-                const PlaylistAppBar(),
+                PlaylistAppBar(
+                  isLogoWhite: isLogoWhite(ref),
+                ),
 
                 /// contents
                 Expanded(
@@ -42,6 +44,7 @@ class GradientBackgroundScreen extends ConsumerWidget with PlayerStateMixin, Pla
                           isSelected: isSelected(ref, item.id),
                           model: item,
                           onClick: () => changeSelectedItem(ref, item),
+                          textColor: textColor(ref),
                         ),
                       );
                     },

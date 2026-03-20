@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/playlist_song_color_model.dart';
@@ -15,4 +17,6 @@ mixin PlayerStateMixin {
 
   bool isBackgroundExist(WidgetRef ref) => ref.watch(backgroundStateProvider.select((value) => value != null));
   PlaylistSongColorModel? background(WidgetRef ref) => ref.watch(backgroundStateProvider);
+  Color textColor(WidgetRef ref) => ref.watch(backgroundStateProvider.select((value) => value?.text ?? const Color(0xFFFFFFFF)));
+  bool isLogoWhite(WidgetRef ref) => ref.watch(backgroundStateProvider.select((value) => value?.isLogoWhite ?? true));
 }

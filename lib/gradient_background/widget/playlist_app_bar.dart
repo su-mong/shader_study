@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../mixin/player_state_mixin.dart';
+class PlaylistAppBar extends StatelessWidget {
+  final bool isLogoWhite;
 
-class PlaylistAppBar extends StatelessWidget with PlayerStateMixin {
-  const PlaylistAppBar({super.key});
+  const PlaylistAppBar({
+    super.key,
+    required this.isLogoWhite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class PlaylistAppBar extends StatelessWidget with PlayerStateMixin {
           Align(
             alignment: Alignment.center,
             child: Image.asset(
-              'assets/images/logo_white.png',
+              isLogoWhite ? 'assets/images/logo_white.png' : 'assets/images/logo_black.png',
               height: 24,
               fit: BoxFit.fitHeight,
             ),
