@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/playlist_song_model.dart';
+import '../../model/playlist_song_model.dart';
 
 class PlaylistSongItemWidget extends StatelessWidget {
   final bool isSelected;

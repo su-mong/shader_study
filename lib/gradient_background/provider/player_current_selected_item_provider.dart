@@ -5,11 +5,11 @@ part 'player_current_selected_item_provider.g.dart';
 @riverpod
 class PlayerCurrentSelectedItem extends _$PlayerCurrentSelectedItem {
   @override
-  String? build() {
+  int? build() {
     return null;
   }
 
-  void selectItem(String id) {
-    state = id;
+  void selectItem(int index) {
+    state = index;
   }
 }

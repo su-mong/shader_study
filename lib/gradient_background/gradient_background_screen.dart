@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shader_study/gradient_background/playlist/playlist_page.dart';
 
 import 'mixin/player_event_mixin.dart';
 import 'mixin/player_state_mixin.dart';
+import 'music_player/music_player_page.dart';
 import 'widget/gradient_background_widget.dart';
 import 'widget/playlist_app_bar.dart';
-import 'widget/playlist_song_item_widget.dart';
 
 class GradientBackgroundScreen extends ConsumerWidget with PlayerStateMixin, PlayerEventMixin {
   const GradientBackgroundScreen({super.key});
@@ -24,31 +25,23 @@ class GradientBackgroundScreen extends ConsumerWidget with PlayerStateMixin, Pla
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                /// appbar
                 PlaylistAppBar(
                   isLogoWhite: isLogoWhite(ref),
                 ),
 
                 /// contents
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: playlist(ref).length,
-                    itemBuilder: (context, index) {
-                      final item = playlist(ref)[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 6,
-                        ),
-                        child: PlaylistSongItemWidget(
-                          isSelected: isSelected(ref, item.id),
-                          model: item,
-                          onClick: () => changeSelectedItem(ref, item),
-                          textColor: textColor(ref),
-                        ),
-                      );
-                    },
-                  ),
+                  child: isSelected(ref)
+                      ? SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        MusicPlayerPage(),
+                        PlaylistPage(),
+                      ],
+                    ),
+                  )
+                      : PlaylistPage(),
                 ),
               ],
             ),

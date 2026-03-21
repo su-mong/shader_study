@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class PlaylistAppBar extends StatelessWidget {
+  static const double height = 56;
+
   final bool isLogoWhite;
 
   const PlaylistAppBar({
@@ -12,7 +14,7 @@ class PlaylistAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: height,
       child: Stack(
         children: [
           Align(

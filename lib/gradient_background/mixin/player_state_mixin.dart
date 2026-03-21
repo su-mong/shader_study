@@ -10,10 +10,11 @@ import '../provider/player_is_collapsed_provider.dart';
 import '../provider/playlist_provider.dart';
 
 mixin PlayerStateMixin {
-  bool isPlaying(WidgetRef ref) => ref.watch(playerCurrentSelectedItemProvider.select((value) => value != null));
+  bool isSelected(WidgetRef ref) => ref.watch(playerCurrentSelectedItemProvider.select((value) => value != null));
   bool isCollapsed(WidgetRef ref) => ref.watch(playerIsCollapsedProvider);
   List<PlaylistSongModel> playlist(WidgetRef ref) => ref.watch(playlistProvider);
-  bool isSelected(WidgetRef ref, String id) => ref.watch(playerCurrentSelectedItemProvider.select((value) => value == id));
+  bool isItemSelected(WidgetRef ref, int index) => ref.watch(playerCurrentSelectedItemProvider.select((value) => value == index));
+  int? selectedIndex(WidgetRef ref) => ref.watch(playerCurrentSelectedItemProvider);
 
   bool isBackgroundExist(WidgetRef ref) => ref.watch(backgroundStateProvider.select((value) => value != null));
   PlaylistSongColorModel? background(WidgetRef ref) => ref.watch(backgroundStateProvider);
