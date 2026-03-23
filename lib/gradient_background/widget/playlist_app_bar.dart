@@ -23,7 +23,7 @@ class PlaylistAppBar extends StatelessWidget {
               builder: (context) => Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: BackButton(
-                  color: const Color(0xFFFFFFFF),
+                  color: isLogoWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
                   onPressed: () => context.pop(),
                 ),
               ),

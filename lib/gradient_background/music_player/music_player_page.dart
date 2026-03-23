@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../utils/context_extension.dart';
 import '../mixin/player_event_mixin.dart';
@@ -11,20 +12,19 @@ import 'widget/music_player_mode_change_widget.dart';
 import 'widget/music_player_show_playlist_widget.dart';
 import 'widget/music_player_slider_widget.dart';
 
-class MusicPlayerPage extends ConsumerStatefulWidget {
+class MusicPlayerPage extends ConsumerWidget with PlayerStateMixin, PlayerEventMixin {
   const MusicPlayerPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MusicPlayerPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    if(selectedIndex(ref) == null) {
+      return const SizedBox.shrink();
+    }
 
-class _MusicPlayerPageState extends ConsumerState<MusicPlayerPage> with PlayerStateMixin, PlayerEventMixin {
-  @override
-  Widget build(BuildContext context) {
     final item = playlist(ref)[selectedIndex(ref)!];
 
     return SizedBox(
-      height: context.safeAreaHeight - PlaylistAppBar.height - 56 - 28,
+      height: context.safeAreaHeight - PlaylistAppBar.height,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,12 +32,30 @@ class _MusicPlayerPageState extends ConsumerState<MusicPlayerPage> with PlayerSt
           const SizedBox(height: 20),
           const MusicPlayerModeChangeWidget(),
           const Spacer(flex: 48), //const SizedBox(height: 48),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              'assets/images/${item.songImageUrl}',
-              width: 240,
-              height: 240,
+          SizedBox(
+            width: double.infinity,
+            height: 240,
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: 0,
+                  child: YoutubePlayer(
+                    controller: context.ytController,
+                    enableFullScreenOnVerticalDrag: false,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/${item.songImageUrl}',
+                      width: 240,
+                      height: 240,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const Spacer(flex: 48), // const SizedBox(height: 48),
@@ -53,14 +71,9 @@ class _MusicPlayerPageState extends ConsumerState<MusicPlayerPage> with PlayerSt
             ),
           ),
           const Spacer(flex: 48), // const SizedBox(height: 48),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: MusicPlayerSliderWidget(
-              currentTimeSeconds: 76,
-              totalTimeSeconds: item.totalSeconds,
-              activeColor: item.colorInfo.isLogoWhite ? const Color(0xFF121717) : const Color(0xFFFFFFFF),
-              inactiveColor: item.colorInfo.isLogoWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
-            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: MusicPlayerSliderWidget(),
           ),
           const Spacer(flex: 36), // const SizedBox(height: 36),
           const Padding(
@@ -68,7 +81,9 @@ class _MusicPlayerPageState extends ConsumerState<MusicPlayerPage> with PlayerSt
             child: MusicPlayerControlWidget(),
           ),
           const Spacer(flex: 116), // const Spacer(),
-          const MusicPlayerShowPlaylistWidget(),
+          MusicPlayerShowPlaylistWidget(
+            isWhite: item.colorInfo.isLogoWhite,
+          ),
           const SizedBox(height: 28),
         ],
       ),

@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class MusicPlayerShowPlaylistWidget extends StatelessWidget {
-  const MusicPlayerShowPlaylistWidget({super.key});
+  final bool isWhite;
+
+  const MusicPlayerShowPlaylistWidget({
+    super.key,
+    required this.isWhite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +20,7 @@ class MusicPlayerShowPlaylistWidget extends StatelessWidget {
           'assets/images/navigate_next.svg',
           width: 24,
           height: 24,
+          color: isWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
         ),
         Text(
           '클릭해서 플레이리스트 보기',
@@ -24,13 +30,14 @@ class MusicPlayerShowPlaylistWidget extends StatelessWidget {
             fontSize: 14,
             height: 21 / 14,
             letterSpacing: 0,
-            color: const Color(0xFFFFFFFF),
+            color: isWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
           ),
         ),
         SvgPicture.asset(
           'assets/images/navigate_next.svg',
           width: 24,
           height: 24,
+          color: isWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
         ),
       ],
     );

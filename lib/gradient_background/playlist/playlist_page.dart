@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../mixin/player_event_mixin.dart';
 import '../mixin/player_state_mixin.dart';
@@ -10,6 +11,8 @@ class PlaylistPage extends ConsumerWidget with PlayerStateMixin, PlayerEventMixi
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final controller = context.ytController;
+
     return ListView.builder(
       shrinkWrap: isSelected(ref) ? true : false,
       physics: isSelected(ref) ? const NeverScrollableScrollPhysics() : null,
@@ -24,7 +27,13 @@ class PlaylistPage extends ConsumerWidget with PlayerStateMixin, PlayerEventMixi
           child: PlaylistSongItemWidget(
             isSelected: isItemSelected(ref, index),
             model: item,
-            onClick: () => changeSelectedItem(ref, index),
+            onClick: () {
+              controller.loadPlaylist(
+                list: playlist(ref).map((song) => song.id).toList(),
+                index: index,
+              );
+              changeSelectedItem(ref, index);
+            },
             textColor: textColor(ref),
           ),
         );

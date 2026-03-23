@@ -13,7 +13,10 @@ extension BuildContextEntension<T> on BuildContext {
   double get width => MediaQuery.of(this).size.width;
   double get height => MediaQuery.of(this).size.height;
   Size get size => MediaQuery.of(this).size;
-  double get safeAreaHeight => MediaQuery.sizeOf(this).height - MediaQuery.paddingOf(this).vertical;
+  double get safeAreaHeight => MediaQuery.sizeOf(this).height
+      - MediaQuery.paddingOf(this).vertical
+      - MediaQuery.viewInsetsOf(this).vertical
+      - MediaQuery.viewPaddingOf(this).vertical;
 
   /// colors
   Color get primaryColor => Theme.of(this).primaryColor;

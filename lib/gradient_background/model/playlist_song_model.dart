@@ -7,7 +7,6 @@ class PlaylistSongModel {
   final String songImageUrl;
   final String title;
   final String albumName;
-  final int totalSeconds;
   final PlaylistSongColorModel colorInfo;
 
   const PlaylistSongModel(
@@ -17,7 +16,6 @@ class PlaylistSongModel {
     required this.songImageUrl,
     required this.title,
     required this.albumName,
-    required this.totalSeconds,
     required this.colorInfo,
   });
 }
