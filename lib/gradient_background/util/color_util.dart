@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 import '../model/playlist_song_color_model.dart';
 
 abstract class ColorUtil {
@@ -25,5 +27,27 @@ abstract class ColorUtil {
     }
 
     return colors;
+  }
+}
+
+extension ColorExtension on Color {
+  /// amount: 0.0 ~ 1.0 (기본 0.1 = 10% 어둡게)
+  Color darken([double amount = 0.1]) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(this);
+    final hslDark = hsl.withLightness(
+      (hsl.lightness - amount).clamp(0.0, 1.0),
+    );
+    return hslDark.toColor();
+  }
+
+  // 참고: 밝게 하려면 brighten()도 만들 수 있습니다.
+  Color brighten([double amount = 0.1]) {
+    final hsl = HSLColor.fromColor(this);
+    final hslLight = hsl.withLightness(
+      (hsl.lightness + amount).clamp(0.0, 1.0),
+    );
+    return hslLight.toColor();
   }
 }

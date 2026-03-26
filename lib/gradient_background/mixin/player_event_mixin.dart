@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../provider/background_state_provider.dart';
 import '../provider/player_current_selected_item_provider.dart';
+import '../provider/player_mode_provider.dart';
 import '../provider/playlist_provider.dart';
 
 mixin PlayerEventMixin {
@@ -10,6 +11,11 @@ mixin PlayerEventMixin {
 
     ref.read(playerCurrentSelectedItemProvider.notifier).selectItem(index);
     ref.read(backgroundStateProvider.notifier).setState(currentSong.colorInfo);
+  }
+
+  void changeSelectedItemById(WidgetRef ref, String id) {
+    final index = ref.read(playlistProvider).indexWhere((song) => song.id == id);
+    changeSelectedItem(ref, index);
   }
 
   void selectPrev(WidgetRef ref) {
@@ -24,5 +30,13 @@ mixin PlayerEventMixin {
     if(currentIndex == null || currentIndex == 12) return;
 
     changeSelectedItem(ref, currentIndex + 1);
+  }
+
+  void setMusicMode(WidgetRef ref) {
+    ref.read(playerModeProvider.notifier).setMusicMode();
+  }
+
+  void setVideoMode(WidgetRef ref) {
+    ref.read(playerModeProvider.notifier).setVideoMode();
   }
 }

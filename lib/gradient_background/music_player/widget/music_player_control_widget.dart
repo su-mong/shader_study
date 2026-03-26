@@ -7,11 +7,41 @@ import '../../mixin/player_event_mixin.dart';
 import '../../mixin/player_state_mixin.dart';
 
 class MusicPlayerControlWidget extends ConsumerWidget with PlayerStateMixin, PlayerEventMixin {
-  const MusicPlayerControlWidget({super.key});
+  final bool isMiniPlayer;
+
+  const MusicPlayerControlWidget({
+    super.key,
+    required this.isMiniPlayer,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLogoWhite = playlist(ref)[selectedIndex(ref)!].colorInfo.isLogoWhite;
+
+    if(isMiniPlayer) {
+      return Row(
+        children: [
+          _playPauseButton(ref),
+          const SizedBox(width: 8),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              context.ytController.nextVideo();
+              selectNext(ref);
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 0, 4),
+              child: SvgPicture.asset(
+                'assets/images/icon_skip_next_filled.svg',
+                width: 24,
+                height: 24,
+                color: isLogoWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Row(
       mainAxisSize: MainAxisSize.max,
@@ -32,20 +62,7 @@ class MusicPlayerControlWidget extends ConsumerWidget with PlayerStateMixin, Pla
           },
         ),
         const Spacer(flex: 6),
-        YoutubeValueBuilder(
-          builder: (context, value) {
-            return _bigButton(
-              icon: value.playerState == PlayerState.playing
-                  ? 'icon_pause_filled'
-                  : 'icon_play_arrow_filled',
-              isWhite: isLogoWhite,
-              onTap: () => _toggle(
-                context.ytController,
-                isPlaying: value.playerState == PlayerState.playing,
-              ),
-            );
-          },
-        ),
+        _playPauseButton(ref),
         const Spacer(flex: 6),
         _bigButton(
           icon: 'icon_skip_next_filled',
@@ -62,6 +79,88 @@ class MusicPlayerControlWidget extends ConsumerWidget with PlayerStateMixin, Pla
           onTap: null,
         ),
       ],
+    );
+  }
+
+  Widget _playPauseButton(WidgetRef ref) {
+    if(isMiniPlayer) {
+      if(isLogoWhite(ref)) {
+        return YoutubeValueBuilder(
+          builder: (context, value) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _toggle(
+                context.ytController,
+                isPlaying: value.playerState == PlayerState.playing,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 4, 8, 4),
+                child: SvgPicture.asset(
+                  'assets/images/'
+                      '${value.playerState == PlayerState.playing ? 'icon_pause_filled' : 'icon_play_arrow_filled'}.svg',
+                  width: 24,
+                  height: 24,
+                  color: const Color(0xFFFFFFFF),
+                ),
+              ),
+            );
+          },
+        );
+      } else {
+        return YoutubeValueBuilder(
+          builder: (context, value) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _toggle(
+                context.ytController,
+                isPlaying: value.playerState == PlayerState.playing,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 4, 8, 4),
+                child: SvgPicture.asset(
+                  'assets/images/'
+                      '${value.playerState == PlayerState.playing ? 'icon_pause_filled' : 'icon_play_arrow_filled'}.svg',
+                  width: 24,
+                  height: 24,
+                  color: const Color(0xFF121717),
+                ),
+              ),
+            );
+          },
+        );
+      }
+    }
+
+    if(isLogoWhite(ref)) {
+      return YoutubeValueBuilder(
+        builder: (context, value) {
+          return _bigButton(
+            icon: value.playerState == PlayerState.playing
+                ? 'icon_pause_filled'
+                : 'icon_play_arrow_filled',
+            isWhite: true,
+            onTap: () => _toggle(
+              context.ytController,
+              isPlaying: value.playerState == PlayerState.playing,
+            ),
+          );
+        },
+      );
+    }
+
+    return YoutubeValueBuilder(
+      builder: (context, value) {
+        return _bigButton(
+          icon: value.playerState == PlayerState.playing
+              ? 'icon_pause_filled'
+              : 'icon_play_arrow_filled',
+          isWhite: false,
+          onTap: () => _toggle(
+            context.ytController,
+            isPlaying: value.playerState == PlayerState.playing,
+          ),
+        );
+      },
     );
   }
 

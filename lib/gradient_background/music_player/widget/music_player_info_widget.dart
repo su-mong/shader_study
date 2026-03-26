@@ -101,3 +101,54 @@ class MusicPlayerInfoWidget extends StatelessWidget {
     );
   }
 }
+
+class MiniMusicPlayerInfoWidget extends StatelessWidget {
+  final String artistName;
+  final String title;
+  final Color artistColor;
+  final Color titleColor;
+
+  const MiniMusicPlayerInfoWidget({
+    super.key,
+    required this.artistName,
+    required this.title,
+    required this.artistColor,
+    required this.titleColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 4,
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+            letterSpacing: 0,
+            color: titleColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+
+        Text(
+          artistName,
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            letterSpacing: 0,
+            color: artistColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+}
