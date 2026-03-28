@@ -24,6 +24,7 @@ class GradientBackgroundScreen extends ConsumerStatefulWidget {
 class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScreen> with PlayerStateMixin, PlayerEventMixin {
   late YoutubePlayerController _controller;
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey<NestedScrollViewState> _nestedScrollViewKey = GlobalKey<NestedScrollViewState>();
   StreamSubscription? _videoStateSubscription;
   StreamSubscription? _controllerSubscription;
   String _previousVideoId = '';
@@ -107,6 +108,7 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
                         return false;
                       },
                       child: NestedScrollView(
+                        key: _nestedScrollViewKey,
                         controller: _scrollController,
                         headerSliverBuilder: (context, innerBoxIsScrolled) => [
                           SliverPersistentHeader(
@@ -139,14 +141,34 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
 
   void _scrollTo(int index, {required double safeAreaHeight}) {
     const itemHeight = 88;
-    final totalScreenShowingIndex = safeAreaHeight ~/ itemHeight;
-    final scrollIndex = math.max(index - totalScreenShowingIndex + 2, 0);
+    const minHeaderHeight = 72.0;
+    const bodyTopPadding = 72.0;
 
+    final maxHeaderHeight = safeAreaHeight - PlaylistAppBar.height;
+    final headerScrollRange = maxHeaderHeight - minHeaderHeight;
+
+    // 아이템이 보이도록 필요한 전체 스크롤 오프셋 계산
+    final visibleBodyHeight = safeAreaHeight - PlaylistAppBar.height - minHeaderHeight - bodyTopPadding;
+    final totalScreenShowingCount = visibleBodyHeight ~/ itemHeight;
+    final scrollIndex = math.max(index - totalScreenShowingCount + 2, 0);
+    final itemOffset = scrollIndex * itemHeight;
+
+    // 1) outer controller: header를 완전히 접기
     _scrollController.animateTo(
-      safeAreaHeight + (scrollIndex * itemHeight),
+      headerScrollRange,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
+
+    // 2) inner controller: body 내 아이템 위치로 스크롤
+    final innerController = _nestedScrollViewKey.currentState?.innerController;
+    if (innerController != null && innerController.hasClients) {
+      innerController.animateTo(
+        itemOffset.toDouble(),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void _snapHeader(double maxHeaderHeight) {
