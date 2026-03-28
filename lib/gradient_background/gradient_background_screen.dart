@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class GradientBackgroundScreen extends ConsumerStatefulWidget {
 class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScreen> with PlayerStateMixin, PlayerEventMixin {
   late YoutubePlayerController _controller;
   final ScrollController _scrollController = ScrollController();
+  StreamSubscription? _videoStateSubscription;
+  StreamSubscription? _controllerSubscription;
   String _previousVideoId = '';
 
   @override
@@ -45,12 +48,14 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
     // _scrollController.addListener(_snapHeader);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.videoStateStream.listen((state) {
+      _videoStateSubscription = _controller.videoStateStream.listen((state) {
+        if (!mounted) return;
         final second = state.position.inSeconds;
         ref.read(playerCurrentSecondsProvider.notifier).change(second);
       });
 
-      _controller.listen((value) {
+      _controllerSubscription = _controller.listen((value) {
+        if (!mounted) return;
         final currentVideoId = value.metaData.videoId;
 
         if (currentVideoId != _previousVideoId) {
@@ -62,8 +67,15 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
   }
 
   @override
-  void dispose() {
+  void deactivate() {
     ref.invalidate(playerCurrentSecondsProvider);
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _videoStateSubscription?.cancel();
+    _controllerSubscription?.cancel();
     _scrollController.dispose();
     _controller.close();
     super.dispose();
