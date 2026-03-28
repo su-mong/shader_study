@@ -44,8 +44,6 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
       ),
     );
 
-    // _scrollController.addListener(_snapHeader);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _videoStateSubscription = _controller.videoStateStream.listen((state) {
         if (!mounted) return;
@@ -116,7 +114,10 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
                             floating: false,
                             delegate: ExpandingPlayerHeaderDelegate(
                               maxHeight: safeAreaHeight - PlaylistAppBar.height,
-                              onTap: (index) => _scrollTo(index, safeAreaHeight: safeAreaHeight),
+                              onTap: () => _scrollTo(
+                                selectedIndex(ref)!,
+                                safeAreaHeight: safeAreaHeight,
+                              ),
                             ),
                           ),
                         ],

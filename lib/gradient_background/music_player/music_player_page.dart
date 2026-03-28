@@ -23,7 +23,7 @@ class ExpandingPlayerHeaderDelegate extends SliverPersistentHeaderDelegate with 
   static const double miniPlayerHorizontalPadding = 16;
 
   final double maxHeight;
-  final void Function(int index) onTap;
+  final VoidCallback onTap;
 
   const ExpandingPlayerHeaderDelegate({
     required this.maxHeight,
@@ -124,7 +124,7 @@ class ExpandingPlayerHeaderDelegate extends SliverPersistentHeaderDelegate with 
 }
 
 class _MusicPlayerWidget extends ConsumerWidget with PlayerStateMixin, PlayerEventMixin {
-  final void Function(int index) onTap;
+  final VoidCallback onTap;
 
   const _MusicPlayerWidget({
     required this.onTap,
@@ -176,7 +176,7 @@ class _MusicPlayerWidget extends ConsumerWidget with PlayerStateMixin, PlayerEve
         ),
         const Spacer(flex: 116),
         MusicPlayerShowPlaylistWidget(
-          onTap: () => onTap(selectedIndex(ref)!),
+          onTap: onTap,
           isWhite: item.colorInfo.isLogoWhite,
         ),
         const SizedBox(height: 28),
