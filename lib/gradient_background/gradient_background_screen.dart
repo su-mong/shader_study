@@ -11,7 +11,6 @@ import 'mixin/player_state_mixin.dart';
 import 'music_player/music_player_page.dart';
 import 'playlist/playlist_page.dart';
 import 'provider/player_current_seconds_provider.dart';
-import 'provider/player_mode_provider.dart';
 import 'widget/gradient_background_widget.dart';
 import 'widget/playlist_app_bar.dart';
 
@@ -104,8 +103,8 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
                   Expanded(
                     child: (isSelected(ref)) ? NotificationListener<ScrollEndNotification>(
                       onNotification: (notification) {
-                        if (notification.depth == 0) {
-                          _snapHeader(safeAreaHeight);
+                        if (notification.depth == 1) {
+                          _snapHeader(safeAreaHeight - PlaylistAppBar.height);
                         }
                         return false;
                       },
@@ -154,22 +153,16 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
 
     final double currentOffset = _scrollController.offset;
 
-    // ExpandingPlayerHeaderDelegate의 maxHeight, minHeight를 알아야 합니다.
-    // delegate에 minHeight를 추가하는 것을 강력 추천합니다.
-    const double minHeaderHeight = 72/* delegate의 minExtent, 예: 80.0 또는 kToolbarHeight */;
+    const double minHeaderHeight = 56;
 
     final double headerRange = maxHeaderHeight - minHeaderHeight;
 
-    // 현재 헤더가 얼마나 펼쳐져 있는지 (0.0 ~ headerRange)
-    // NestedScrollView에서는 outer scroll offset이 header 영역을 포함합니다.
-    final double headerVisibleExtent = (maxHeaderHeight - currentOffset).clamp(0.0, headerRange);
-    print('headerVisibleExtent = $headerVisibleExtent');
+    if(currentOffset >= headerRange) {
+      return;
+    }
 
-    final bool shouldExpand = headerVisibleExtent > headerRange / 2;
-
-    final double targetOffset = shouldExpand
-        ? 0.0                                      // 최대 확장 (offset 0)
-        : maxHeaderHeight - minHeaderHeight;       // 최소 축소 (header가 minHeight만큼만 보이게)
+    final bool shouldExpand = currentOffset < headerRange / 2;
+    final double targetOffset = shouldExpand ? 0 : maxHeaderHeight;
 
     // 부드러운 애니메이션으로 snap
     _scrollController.animateTo(
