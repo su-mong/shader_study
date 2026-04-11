@@ -1,21 +1,18 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'playlist_song_color_model.dart';
 
-class PlaylistSongModel {
-  final String id;
-  final String artistImage;
-  final String artistName;
-  final String songImageUrl;
-  final String title;
-  final String albumName;
-  final PlaylistSongColorModel colorInfo;
+part 'playlist_song_model.freezed.dart';
 
-  const PlaylistSongModel(
-    this.id, {
-    required this.artistImage,
-    required this.artistName,
-    required this.songImageUrl,
-    required this.title,
-    required this.albumName,
-    required this.colorInfo,
-  });
+@freezed
+abstract class PlaylistSongModel with _$PlaylistSongModel {
+  const factory PlaylistSongModel(
+    String id, {
+    required String artistImage,
+    required String artistName,
+    required String songImageUrl,
+    required String title,
+    required String albumName,
+    required PlaylistSongColorModel colorInfo,
+  }) = _PlaylistSongModel;
 }

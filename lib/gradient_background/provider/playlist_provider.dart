@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../model/playlist_model.dart';
 import '../model/playlist_song_color_model.dart';
 import '../model/playlist_song_model.dart';
 
@@ -10,8 +11,24 @@ part 'playlist_provider.g.dart';
 @riverpod
 class Playlist extends _$Playlist {
   @override
-  List<PlaylistSongModel> build() {
-    return const [
+  PlaylistModel build() {
+    return _hololive;
+  }
+
+  void toggle() {
+    switch (state.type) {
+      case PlaylistType.stellive:
+        state = _hololive;
+        break;
+      case PlaylistType.hololive:
+        state = _stellive;
+        break;
+    }
+  }
+
+  static const PlaylistModel _hololive = PlaylistModel(
+    type: PlaylistType.hololive,
+    list: [
       PlaylistSongModel(
         'GuDq5jRf7eM', artistImage: 'kanade.jpg', artistName: 'Otonose Kanade', songImageUrl: 's_cheerful_vibes_echo.jpg',
         title: 'Cheerful Vibes Echo', albumName: 'Cheerful Vibes Echo (Otonose Kanade SOLO)',
@@ -77,6 +94,47 @@ class Playlist extends _$Playlist {
         title: 'A Horny Money World 〜legendary night〜', albumName: 'Ahoy!! You\'re All Pirates♡',
         colorInfo: PlaylistSongColorModel(primary: Color(0xFFA82313), secondary: Color(0xFFC2182C), accent1: Color(0xFFE53935), accent2: Color(0xFF7F0000), text: Color(0xFFFFFFFF), isLogoWhite: true),
       ),
-    ];
-  }
+    ],
+  );
+
+  static const PlaylistModel _stellive = PlaylistModel(
+    type: PlaylistType.stellive,
+    list: [
+      PlaylistSongModel(
+        'QXUxnxoOIOI', artistImage: 'rin.jpg', artistName: '아오쿠모 린', songImageUrl: 's_rin_aizo.jpg',
+        title: 'AIZO [King Gnu]', albumName: 'cover song',
+        colorInfo: PlaylistSongColorModel(primary: Color(0xFF2B66C0), secondary: Color(0xFF1E4F9E), accent1: Color(0xFF3B7ED9), accent2: Color(0xFF6EB5FF), text: Color(0xFFFFFFFF), isLogoWhite: true),
+      ),
+
+      PlaylistSongModel(
+        'zHbh6KO1dFo', artistImage: 'rin.jpg', artistName: '아오쿠모 린', songImageUrl: 's_rin_all_i_want_for_christmas_is_you.jpg',
+        title: 'All I Want For Christmas Is You (Kinyopio Ver.)', albumName: 'cover song',
+        colorInfo: PlaylistSongColorModel(primary: Color(0xFF2B66C0), secondary: Color(0xFF1E4F9E), accent1: Color(0xFF3B7ED9), accent2: Color(0xFF6EB5FF), text: Color(0xFFFFFFFF), isLogoWhite: true),
+      ),
+
+      PlaylistSongModel(
+        'KSCTkOn5Niw', artistImage: 'rin.jpg', artistName: '아오쿠모 린', songImageUrl: 's_rin_stay.jpg',
+        title: 'STAY', albumName: 'cover song',
+        colorInfo: PlaylistSongColorModel(primary: Color(0xFF2B66C0), secondary: Color(0xFF1E4F9E), accent1: Color(0xFF3B7ED9), accent2: Color(0xFF6EB5FF), text: Color(0xFFFFFFFF), isLogoWhite: true),
+      ),
+
+      PlaylistSongModel(
+        'nZuA8cQP66A', artistImage: 'lize.jpg', artistName: '아카네 리제', songImageUrl: 's_lize_drowning.jpg',
+        title: 'Drowning Cover.(악어의 놀이터2 콘서트)', albumName: 'cover song',
+        colorInfo: PlaylistSongColorModel(primary: Color(0xFF971B2F), secondary: Color(0xFFB0223A), accent1: Color(0xFFD13F4F), accent2: Color(0xFF5C0F1F), text: Color(0xFFFFFFFF), isLogoWhite: true),
+      ),
+
+      PlaylistSongModel(
+        'icR-Tg7YZwY', artistImage: 'lize.jpg', artistName: '아카네 리제', songImageUrl: 's_lize_propose.jpg',
+        title: '프로포즈(プロポーズ)', albumName: 'cover song',
+        colorInfo: PlaylistSongColorModel(primary: Color(0xFF971B2F), secondary: Color(0xFFB0223A), accent1: Color(0xFFD13F4F), accent2: Color(0xFF5C0F1F), text: Color(0xFFFFFFFF), isLogoWhite: true),
+      ),
+
+      PlaylistSongModel(
+        'fTqvR0U0EC4', artistImage: 'lize.jpg', artistName: '아카네 리제', songImageUrl: 's_lize_tomorrow_night_sky.jpg',
+        title: '내일의 밤하늘 초계반(アスノヨゾラ哨戒班)', albumName: 'cover song',
+        colorInfo: PlaylistSongColorModel(primary: Color(0xFF971B2F), secondary: Color(0xFFB0223A), accent1: Color(0xFFD13F4F), accent2: Color(0xFF5C0F1F), text: Color(0xFFFFFFFF), isLogoWhite: true),
+      ),
+    ],
+  );
 }

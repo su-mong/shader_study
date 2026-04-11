@@ -1,13 +1,19 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shader_study/shader_mask/glitch_shader_painter.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../utils/context_extension.dart';
 import 'mixin/player_event_mixin.dart';
 import 'mixin/player_state_mixin.dart';
+import 'model/playlist_model.dart';
 import 'music_player/music_player_page.dart';
 import 'playlist/playlist_page.dart';
 import 'provider/player_current_seconds_provider.dart';
@@ -21,7 +27,8 @@ class GradientBackgroundScreen extends ConsumerStatefulWidget {
   ConsumerState<GradientBackgroundScreen> createState() => _GradientBackgroundScreenState();
 }
 
-class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScreen> with PlayerStateMixin, PlayerEventMixin {
+class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScreen>
+    with PlayerStateMixin, PlayerEventMixin, TickerProviderStateMixin {
   late YoutubePlayerController _controller;
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<NestedScrollViewState> _nestedScrollViewKey = GlobalKey<NestedScrollViewState>();
@@ -29,9 +36,21 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
   StreamSubscription? _controllerSubscription;
   String _previousVideoId = '';
 
+  bool _canToggle = true;
+
+  /// for glitch transition
+  ui.FragmentShader? _shader;
+  Ticker? _ticker;
+  double _time = 0;
+  ui.Image? _cardImage;
+  final _boundaryKey = GlobalKey();
+  bool _glitching = false;
+
   @override
   void initState() {
     super.initState();
+
+    _loadShader();
 
     _controller = YoutubePlayerController(
       params: const YoutubePlayerParams(
@@ -56,6 +75,16 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
         if (!mounted) return;
         final currentVideoId = value.metaData.videoId;
 
+        _canToggle = switch(value.playerState) {
+          PlayerState.unknown => true,
+          PlayerState.ended => true,
+          PlayerState.paused => true,
+          PlayerState.cued => false,
+          PlayerState.unStarted => false,
+          PlayerState.buffering => false,
+          PlayerState.playing => false,
+        };
+
         if (currentVideoId != _previousVideoId) {
           _previousVideoId = currentVideoId;
           changeSelectedItemById(ref, currentVideoId);
@@ -72,6 +101,8 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
 
   @override
   void dispose() {
+    _ticker?.dispose();
+    _cardImage?.dispose();
     _videoStateSubscription?.cancel();
     _controllerSubscription?.cancel();
     _scrollController.dispose();
@@ -93,46 +124,67 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
             const GradientBackgroundWidget(),
 
             /// main body
-            SafeArea(
-              child: Column(
-                children: [
-                  PlaylistAppBar(
-                    isLogoWhite: isLogoWhite(ref),
-                  ),
-                  Expanded(
-                    child: (isSelected(ref)) ? NotificationListener<ScrollEndNotification>(
-                      onNotification: (notification) {
-                        if (notification.depth == 1) {
-                          _snapHeader(safeAreaHeight - PlaylistAppBar.height);
-                        }
-                        return false;
-                      },
-                      child: NestedScrollView(
-                        key: _nestedScrollViewKey,
-                        controller: _scrollController,
-                        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                          SliverPersistentHeader(
-                            pinned: true,
-                            floating: false,
-                            delegate: ExpandingPlayerHeaderDelegate(
-                              maxHeight: safeAreaHeight - PlaylistAppBar.height,
-                              onTap: () => _scrollTo(
-                                selectedIndex(ref)!,
-                                safeAreaHeight: safeAreaHeight,
+            RepaintBoundary(
+              key: _boundaryKey,
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    PlaylistAppBar(
+                      isWhite: isLogoWhite(ref),
+                      toggle: () => _startToggle(context),
+                      logo: playlistType(ref) == PlaylistType.stellive
+                          ? isLogoWhite(ref) ? 'assets/images/stellive_logo_white_1.png' : 'assets/images/stellive_logo_black.png'
+                          : isLogoWhite(ref) ? 'assets/images/logo_white.png' : 'assets/images/logo_black.png',
+                    ),
+                    Expanded(
+                      child: (isSelected(ref)) ? NotificationListener<ScrollEndNotification>(
+                        onNotification: (notification) {
+                          if (notification.depth == 1) {
+                            _snapHeader(safeAreaHeight - PlaylistAppBar.height);
+                          }
+                          return false;
+                        },
+                        child: NestedScrollView(
+                          key: _nestedScrollViewKey,
+                          controller: _scrollController,
+                          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                            SliverPersistentHeader(
+                              pinned: true,
+                              floating: false,
+                              delegate: ExpandingPlayerHeaderDelegate(
+                                maxHeight: safeAreaHeight - PlaylistAppBar.height,
+                                onTap: () => _scrollTo(
+                                  selectedIndex(ref)!,
+                                  safeAreaHeight: safeAreaHeight,
+                                ),
                               ),
                             ),
+                          ],
+                          body: Padding(
+                            padding: const EdgeInsets.only(top: 72),
+                            child: const PlaylistPage(),
                           ),
-                        ],
-                        body: Padding(
-                          padding: const EdgeInsets.only(top: 72),
-                          child: const PlaylistPage(),
                         ),
-                      ),
-                    ) : const PlaylistPage(),
-                  ),
-                ],
+                      ) : const PlaylistPage(),
+                    ),
+                  ],
+                ),
               ),
             ),
+
+            /// Glitch Transition
+            if(_glitching)
+              SizedBox(
+                width: _cardImage!.width.toDouble(),
+                height: _cardImage!.height.toDouble(),
+                child: CustomPaint(
+                  painter: GlitchShaderPainter(
+                    shader: _shader!,
+                    time: _time,
+                    cardImage: _cardImage!,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -193,5 +245,59 @@ class _GradientBackgroundScreenState extends ConsumerState<GradientBackgroundScr
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOutCubic,
     );
+  }
+
+  Future<void> _loadShader() async {
+    final program = await ui.FragmentProgram.fromAsset('shaders/glitch_transition.frag');
+    _shader = program.fragmentShader();
+    setState(() {});
+  }
+
+  Future<void> _captureScreen() async {
+    final boundary = _boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    if (boundary == null) return;
+
+    final image = await boundary.toImage(pixelRatio: 2.0);
+    setState(() {
+      _cardImage = image;
+    });
+  }
+
+  void _startToggle(BuildContext context) async {
+    if(!_canToggle) {
+      Fluttertoast.showToast(msg: '곡이 재생 중일 때는 플레이리스트를 교체할 수 없습니다.');
+      return;
+    }
+
+    if (_glitching) return;
+    _glitching = true;
+    _time = 0;
+    await _captureScreen();
+
+    _ticker?.dispose();
+    _ticker = createTicker((elapsed) {
+      final t = elapsed.inMilliseconds / 1000.0;
+      setState(() {
+        _time = t;
+      });
+
+      // Reset after 1.5 seconds
+      if (t > 1.5) {
+        _ticker?.stop();
+        setState(() {
+          _time = 0;
+          _glitching = false;
+          _cardImage = null;
+        });
+
+        bool isSelected = toggleList(ref);
+        if(isSelected) {
+          _controller.loadPlaylist(
+            list: playlist(ref).map((song) => song.id).toList(),
+            index: 0,
+          );
+        }
+      }
+    })..start();
   }
 }

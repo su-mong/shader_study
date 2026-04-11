@@ -4,11 +4,15 @@ import 'package:go_router/go_router.dart';
 class PlaylistAppBar extends StatelessWidget {
   static const double height = 56;
 
-  final bool isLogoWhite;
+  final String logo;
+  final bool isWhite;
+  final VoidCallback toggle;
 
   const PlaylistAppBar({
     super.key,
-    required this.isLogoWhite,
+    required this.logo,
+    required this.isWhite,
+    required this.toggle,
   });
 
   @override
@@ -23,7 +27,7 @@ class PlaylistAppBar extends StatelessWidget {
               builder: (context) => Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: BackButton(
-                  color: isLogoWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
+                  color: isWhite ? const Color(0xFFFFFFFF) : const Color(0xFF121717),
                   onPressed: () => context.pop(),
                 ),
               ),
@@ -32,10 +36,14 @@ class PlaylistAppBar extends StatelessWidget {
 
           Align(
             alignment: Alignment.center,
-            child: Image.asset(
-              isLogoWhite ? 'assets/images/logo_white.png' : 'assets/images/logo_black.png',
-              height: 24,
-              fit: BoxFit.fitHeight,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: toggle,
+              child: Image.asset(
+                logo,
+                height: 24,
+                fit: BoxFit.fitHeight,
+              ),
             ),
           ),
         ],

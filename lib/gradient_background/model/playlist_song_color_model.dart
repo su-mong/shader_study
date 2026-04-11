@@ -1,19 +1,17 @@
 import 'dart:ui';
 
-class PlaylistSongColorModel {
-  final Color primary;
-  final Color secondary;
-  final Color accent1;
-  final Color accent2;
-  final Color text;
-  final bool isLogoWhite;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const PlaylistSongColorModel({
-    required this.primary,
-    required this.secondary,
-    required this.accent1,
-    required this.accent2,
-    required this.text,
-    required this.isLogoWhite,
-  });
+part 'playlist_song_color_model.freezed.dart';
+
+@freezed
+abstract class PlaylistSongColorModel with _$PlaylistSongColorModel {
+  const factory PlaylistSongColorModel({
+    required Color primary,
+    required Color secondary,
+    required Color accent1,
+    required Color accent2,
+    required Color text,
+    required bool isLogoWhite,
+  }) = _PlaylistSongColorModel;
 }

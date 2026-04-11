@@ -7,14 +7,14 @@ import '../provider/playlist_provider.dart';
 
 mixin PlayerEventMixin {
   void changeSelectedItem(WidgetRef ref, int index) {
-    final currentSong = ref.read(playlistProvider)[index];
+    final currentSong = ref.read(playlistProvider).list[index];
 
     ref.read(playerCurrentSelectedItemProvider.notifier).selectItem(index);
     ref.read(backgroundStateProvider.notifier).setState(currentSong.colorInfo);
   }
 
   void changeSelectedItemById(WidgetRef ref, String id) {
-    final index = ref.read(playlistProvider).indexWhere((song) => song.id == id);
+    final index = ref.read(playlistProvider).list.indexWhere((song) => song.id == id);
     changeSelectedItem(ref, index);
   }
 
@@ -38,5 +38,16 @@ mixin PlayerEventMixin {
 
   void setVideoMode(WidgetRef ref) {
     ref.read(playerModeProvider.notifier).setVideoMode();
+  }
+
+  bool toggleList(WidgetRef ref) {
+    ref.read(playlistProvider.notifier).toggle();
+
+    final isSelected = ref.read(playerCurrentSelectedItemProvider.select((value) => value != null));
+    if(isSelected) {
+      changeSelectedItem(ref, 0);
+    }
+
+    return isSelected;
   }
 }
